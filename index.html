@@ -192,8 +192,21 @@
     h2, h3, h4 { color: var(--text); line-height: 1.22; letter-spacing: -.025em; scroll-margin-top: 230px; }
     h2 { margin: 3.2rem 0 1.1rem; padding-top: .7rem; border-top: 1px solid var(--line); font-size: clamp(1.55rem, 3vw, 2.15rem); }
     h2:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
-    h3 { margin: 2.2rem 0 .8rem; font-size: 1.3rem; color: var(--primary-2); }
-    h4 { margin: 1.6rem 0 .5rem; font-size: 1.06rem; }
+    h3 {
+      margin: 2.4rem 0 1rem; font-size: 1.45rem; color: var(--primary-2);
+      font-weight: 850;
+    }
+    h4 {
+      position: relative; margin: 2rem 0 .7rem; padding-left: 1.2rem;
+      font-size: 1.08rem; font-weight: 850; color: var(--text);
+    }
+    h4::before {
+      content: ""; position: absolute; left: 0; top: .58em;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 12%, transparent);
+    }
+    h4 + p { margin-top: .35rem; }
     p { margin: .7rem 0 1.1rem; }
     ul, ol { padding-left: 1.35rem; }
     li { margin: .34rem 0; }
@@ -1347,49 +1360,6 @@ govern</h3>
 </ul>
 <p><strong>Deliverable:</strong> A measurable platform with
 service-level objectives, security review, and rollback capability.</p>
-<h3 id="suggested-24-week-learning-plan">Suggested 24-week learning
-plan</h3>
-<table>
-<thead>
-<tr class="header">
-<th>Weeks</th>
-<th>Focus</th>
-<th>Project outcome</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1–4</td>
-<td>Python/TypeScript, Git, APIs, SQL</td>
-<td>API test collection</td>
-</tr>
-<tr class="even">
-<td>5–8</td>
-<td>Playwright and CI/CD</td>
-<td>UI regression tests in CI</td>
-</tr>
-<tr class="odd">
-<td>9–12</td>
-<td>LLM fundamentals and prompting</td>
-<td>Structured test generator</td>
-</tr>
-<tr class="even">
-<td>13–16</td>
-<td>Embeddings, vector DB, and RAG</td>
-<td>Grounded QA knowledge assistant</td>
-</tr>
-<tr class="odd">
-<td>17–20</td>
-<td>Tool calling, MCP, workflows</td>
-<td>Browser test agent</td>
-</tr>
-<tr class="even">
-<td>21–24</td>
-<td>Evaluations, security, observability</td>
-<td>Production-ready pilot</td>
-</tr>
-</tbody>
-</table>
 <hr />
 <h2 id="6-architecture-for-an-agentic-ai-automation-platform">6.
 Architecture for an agentic AI automation platform</h2>
