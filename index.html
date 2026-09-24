@@ -131,8 +131,8 @@
 
     .main { position: relative; grid-column: 2; width: min(100%, 1080px); margin: 0 auto; padding: 50px 52px 90px; }
     .main::before {
-      content: ""; position: sticky; top: 72px; z-index: 29;
-      display: block; height: 62px; margin-bottom: -62px;
+      content: ""; position: fixed; top: 72px; left: var(--sidebar); right: 0; z-index: 25;
+      height: 62px;
       background: var(--bg);
       pointer-events: none;
     }
@@ -275,6 +275,7 @@
       body.nav-open .sidebar { transform: translateX(0); }
       body.nav-open .scrim { display: block; position: fixed; z-index: 15; inset: 72px 0 0; background: rgba(3,10,20,.42); }
       .main { width: 100%; padding: 36px 24px 72px; }
+      .main::before { left: 0; }
     }
 
     @media (min-width: 981px) {
@@ -282,6 +283,7 @@
       body.sidebar-collapsed .sidebar { transform: translateX(-105%); }
       body.sidebar-collapsed .layout { grid-template-columns: 0 minmax(0, 1fr); }
       body.sidebar-collapsed .main { grid-column: 2; }
+      body.sidebar-collapsed .main::before { left: 0; }
     }
 
     @media (max-width: 650px) {
@@ -291,7 +293,7 @@
       .search-status { display: none; }
       .actions .secondary-action { display: none; }
       .main { padding: 24px 12px 60px; }
-      .main::before { height: 24px; margin-bottom: -24px; }
+      .main::before { height: 24px; }
       .hero { top: 72px; padding: 18px 20px; border-radius: 16px; }
       .hero p { display: none; }
       article { padding: 24px 18px; border-radius: 18px; }
