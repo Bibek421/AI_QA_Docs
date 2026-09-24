@@ -1,0 +1,2246 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An editable practical guide from manual QA to agentic AI testing.">
+  <title>AI QA Engineer Complete Guide</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef3fa;
+      --text: #142033;
+      --muted: #607089;
+      --line: #dce4ef;
+      --primary: #2156d9;
+      --primary-2: #183f9f;
+      --accent: #00a47a;
+      --code: #101827;
+      --code-text: #e7edf8;
+      --mark: #ffe58f;
+      --shadow: 0 16px 40px rgba(30, 48, 80, .10);
+      --radius: 16px;
+      --sidebar: 320px;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0d1421;
+      --surface: #141e2e;
+      --surface-2: #1b293d;
+      --text: #eef4ff;
+      --muted: #a5b3c9;
+      --line: #2c3b52;
+      --primary: #7da5ff;
+      --primary-2: #aac2ff;
+      --accent: #46d6ad;
+      --code: #080d16;
+      --code-text: #e7edf8;
+      --mark: #7b5a00;
+      --shadow: 0 16px 40px rgba(0, 0, 0, .28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.72 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--primary); }
+    :focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent); outline-offset: 3px; }
+
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 30;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 22px;
+      background: color-mix(in srgb, var(--surface) 90%, transparent);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 260px; }
+    .logo {
+      width: 42px; height: 42px; border-radius: 13px;
+      display: grid; place-items: center;
+      color: white; font-weight: 850; letter-spacing: -.04em;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 30%, transparent);
+    }
+    .brand-copy strong { display: block; line-height: 1.15; }
+    .brand-copy span { color: var(--muted); font-size: .78rem; }
+
+    .search-wrap { position: relative; flex: 1; max-width: 620px; }
+    .search-wrap input {
+      width: 100%; min-height: 44px; padding: 0 110px 0 42px;
+      border: 1px solid var(--line); border-radius: 12px;
+      background: var(--surface-2); color: var(--text);
+    }
+    .search-icon { position: absolute; left: 14px; top: 12px; color: var(--muted); }
+    .search-status { position: absolute; right: 12px; top: 12px; font-size: .78rem; color: var(--muted); }
+
+    .actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .btn {
+      min-height: 42px; padding: 0 14px;
+      border: 1px solid var(--line); border-radius: 11px;
+      background: var(--surface); color: var(--text); font-weight: 700;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn:hover { border-color: var(--primary); color: var(--primary); }
+    .btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
+    .btn.primary:hover { background: var(--primary-2); color: white; }
+    .btn[aria-pressed="true"] { background: var(--accent); color: #061d16; border-color: var(--accent); }
+    .icon { width: 18px; height: 18px; flex: none; }
+
+    .progress { position: fixed; z-index: 40; top: 71px; left: 0; width: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+
+    .layout { display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr); padding-top: 72px; min-height: 100vh; }
+    .sidebar {
+      position: fixed; z-index: 20; top: 72px; bottom: 0; left: 0;
+      width: var(--sidebar); overflow: auto;
+      padding: 24px 16px 40px 22px;
+      background: var(--surface); border-right: 1px solid var(--line);
+    }
+    .side-label { margin: 0 8px 12px; color: var(--muted); font-size: .74rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .toc { display: grid; gap: 3px; }
+    .toc a {
+      display: block; padding: 8px 10px; border-radius: 9px;
+      color: var(--muted); text-decoration: none; font-size: .88rem; line-height: 1.35;
+    }
+    .toc a[data-level="3"] { padding-left: 24px; font-size: .82rem; }
+    .toc a:hover, .toc a.active { background: var(--surface-2); color: var(--primary); }
+    .toc a.active { font-weight: 750; box-shadow: inset 3px 0 var(--primary); }
+
+    .sidebar-card {
+      margin-top: 22px; padding: 14px;
+      border: 1px solid var(--line); border-radius: 12px;
+      background: linear-gradient(145deg, var(--surface-2), var(--surface));
+      font-size: .82rem; color: var(--muted);
+    }
+    .sidebar-card strong { color: var(--text); display: block; margin-bottom: 4px; }
+
+    .main { grid-column: 2; width: min(100%, 1080px); margin: 0 auto; padding: 50px 52px 90px; }
+    .hero {
+      position: sticky; top: 84px; z-index: 14; overflow: hidden;
+      margin-bottom: 28px; padding: 22px 28px;
+      background: linear-gradient(135deg, #123e9d 0%, #2156d9 52%, #008d75 115%);
+      color: white; border-radius: 24px; box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: ""; position: absolute; width: 240px; height: 240px; right: -70px; top: -110px;
+      border: 36px solid rgba(255,255,255,.12); border-radius: 50%;
+    }
+    .eyebrow { margin: 0 0 8px; font-size: .78rem; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; opacity: .82; }
+    .hero h1 { margin: 0; max-width: 760px; font-size: clamp(1.55rem, 3vw, 2.25rem); line-height: 1.08; letter-spacing: -.035em; }
+    .hero p { max-width: 820px; margin: 9px 0 0; font-size: .94rem; opacity: .88; }
+
+    .edit-banner {
+      display: none; margin: 0 0 22px; padding: 13px 16px;
+      border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--line));
+      border-radius: 12px; background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+      color: var(--text);
+    }
+    body.editing .edit-banner { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+    .save-state { color: var(--muted); font-size: .84rem; white-space: nowrap; }
+    .editor-toolbar {
+      position: relative; z-index: 12;
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+      margin: 0 0 16px; padding: 10px;
+      border: 1px solid var(--line); border-radius: 14px;
+      background: color-mix(in srgb, var(--surface) 94%, transparent);
+      box-shadow: 0 10px 24px color-mix(in srgb, var(--text) 8%, transparent);
+      backdrop-filter: blur(12px);
+    }
+    .editor-toolbar .format-tools { display: none; align-items: center; flex-wrap: wrap; gap: 7px; }
+    body.editing .editor-toolbar .format-tools { display: flex; }
+    body.editing .editor-toolbar .start-edit { display: none; }
+    .editor-help { margin-left: auto; color: var(--muted); font-size: .82rem; }
+    .tool-btn { min-width: 42px; justify-content: center; padding-inline: 10px; }
+
+    article {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+      padding: clamp(26px, 5vw, 62px); box-shadow: var(--shadow);
+    }
+    article[contenteditable="true"] { outline: 3px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 5px; }
+    article > h1:first-child { display: none; }
+    .topic-section { display: none; animation: topic-in .22s ease; }
+    .topic-section.active { display: block; }
+    .topic-section > h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+    .subtopic {
+      margin: 12px 0; border: 1px solid var(--line); border-radius: 14px;
+      background: var(--surface); overflow: clip;
+    }
+    .subtopic summary {
+      position: relative; display: flex; align-items: center;
+      min-height: 58px; padding: 13px 48px 13px 16px;
+      background: var(--surface-2); cursor: pointer; list-style: none;
+    }
+    .subtopic summary::-webkit-details-marker { display: none; }
+    .subtopic summary::after {
+      content: "+"; position: absolute; right: 17px; top: 50%; transform: translateY(-50%);
+      width: 27px; height: 27px; display: grid; place-items: center;
+      border-radius: 50%; background: var(--surface); color: var(--primary); font-size: 1.25rem; font-weight: 850;
+    }
+    .subtopic[open] summary::after { content: "−"; }
+    .subtopic summary:hover { color: var(--primary); }
+    .subtopic summary h3 { margin: 0; color: inherit; font-size: 1.08rem; }
+    .subtopic-content { padding: 7px 18px 20px; border-top: 1px solid var(--line); }
+    @keyframes topic-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .topic-navigation {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: center; gap: 16px; margin-top: 20px; padding: 16px 18px;
+      border: 1px solid var(--line); border-radius: 16px; background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .topic-navigation .next { justify-self: end; }
+    .topic-navigation .topic-position { color: var(--muted); font-size: .88rem; font-weight: 750; text-align: center; }
+    .topic-navigation button:disabled { opacity: .4; cursor: not-allowed; border-color: var(--line); color: var(--muted); }
+    .topic-navigation button strong { display: block; max-width: 230px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    h2, h3, h4 { color: var(--text); line-height: 1.22; letter-spacing: -.025em; scroll-margin-top: 230px; }
+    h2 { margin: 3.2rem 0 1.1rem; padding-top: .7rem; border-top: 1px solid var(--line); font-size: clamp(1.55rem, 3vw, 2.15rem); }
+    h2:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
+    h3 { margin: 2.2rem 0 .8rem; font-size: 1.3rem; color: var(--primary-2); }
+    h4 { margin: 1.6rem 0 .5rem; font-size: 1.06rem; }
+    p { margin: .7rem 0 1.1rem; }
+    ul, ol { padding-left: 1.35rem; }
+    li { margin: .34rem 0; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 1.4rem 0; padding: 16px 20px;
+      border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0;
+      background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+    }
+    blockquote p { margin: 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 3rem 0; }
+    code {
+      padding: .15em .38em; border-radius: 5px;
+      background: var(--surface-2); color: var(--primary-2); font-size: .9em;
+    }
+    pre {
+      overflow: auto; margin: 1.4rem 0; padding: 20px;
+      border-radius: 14px; background: var(--code); color: var(--code-text);
+      border: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+    }
+    pre code { padding: 0; background: transparent; color: inherit; }
+    .mermaid { white-space: pre-wrap; }
+    .visual-diagram {
+      margin: 1.6rem 0 2rem; padding: 22px;
+      border: 1px solid var(--line); border-radius: 18px;
+      background: linear-gradient(145deg, var(--surface-2), var(--surface));
+      overflow: hidden;
+    }
+    .visual-diagram figcaption { margin-bottom: 18px; font-size: 1.02rem; font-weight: 800; color: var(--text); }
+    .flow-stack { display: grid; justify-items: center; gap: 8px; }
+    .flow-node {
+      width: min(100%, 560px); padding: 13px 16px; border-radius: 12px;
+      border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--line));
+      background: var(--surface); color: var(--text); text-align: center; font-weight: 750;
+      box-shadow: 0 6px 16px color-mix(in srgb, var(--primary) 8%, transparent);
+    }
+    .flow-node.ai { background: color-mix(in srgb, var(--primary) 12%, var(--surface)); border-color: var(--primary); }
+    .flow-node.human { background: color-mix(in srgb, var(--accent) 13%, var(--surface)); border-color: var(--accent); }
+    .flow-node.evidence { border-style: dashed; }
+    .flow-arrow { color: var(--primary); font-size: 1.3rem; font-weight: 900; line-height: 1; }
+    .flow-branch { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .flow-branch .flow-node { height: 100%; display: grid; place-items: center; }
+    .diagram-note { margin: 14px 0 0; color: var(--muted); font-size: .88rem; text-align: center; }
+    .step-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; gap: 26px; }
+    .step-card { position: relative; padding: 16px 13px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); text-align: center; }
+    .step-card:not(:last-child)::after { content: "→"; position: absolute; right: -21px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 1.35rem; font-weight: 900; }
+    .step-number { width: 30px; height: 30px; display: grid; place-items: center; margin: 0 auto 9px; border-radius: 50%; background: var(--primary); color: white; font-weight: 850; }
+    .step-card strong { display: block; line-height: 1.3; }
+    .step-card small { display: block; margin-top: 5px; color: var(--muted); line-height: 1.4; }
+    .architecture-core { display: grid; gap: 9px; justify-items: center; }
+    .architecture-services { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .architecture-data { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .mini-node { padding: 11px 8px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); text-align: center; font-size: .88rem; font-weight: 700; }
+    .layer-label { margin: 4px 0 -1px; color: var(--muted); font-size: .73rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+
+    .table-wrap { overflow-x: auto; margin: 1.5rem 0; border: 1px solid var(--line); border-radius: 14px; }
+    table { width: 100%; min-width: 600px; border-collapse: collapse; background: var(--surface); }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+    th { background: var(--surface-2); color: var(--text); font-size: .84rem; letter-spacing: .02em; }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: color-mix(in srgb, var(--primary) 4%, var(--surface)); }
+    mark.search-hit { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2px; }
+
+    .mobile-menu { display: inline-flex; }
+    .scrim { display: none; }
+    .toast {
+      position: fixed; right: 22px; bottom: 22px; z-index: 60;
+      padding: 12px 16px; border-radius: 11px; background: var(--text); color: var(--surface);
+      box-shadow: var(--shadow); transform: translateY(30px); opacity: 0; pointer-events: none;
+      transition: .2s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @media (max-width: 980px) {
+      .brand-copy, .actions .label { display: none; }
+      .brand { min-width: auto; }
+      .layout { display: block; }
+      .sidebar { transform: translateX(-105%); transition: transform .22s ease; box-shadow: var(--shadow); }
+      body.nav-open .sidebar { transform: translateX(0); }
+      body.nav-open .scrim { display: block; position: fixed; z-index: 15; inset: 72px 0 0; background: rgba(3,10,20,.42); }
+      .main { width: 100%; padding: 36px 24px 72px; }
+    }
+
+    @media (min-width: 981px) {
+      .sidebar, .layout, .main { transition: transform .22s ease, width .22s ease, padding .22s ease; }
+      body.sidebar-collapsed .sidebar { transform: translateX(-105%); }
+      body.sidebar-collapsed .layout { grid-template-columns: 0 minmax(0, 1fr); }
+      body.sidebar-collapsed .main { grid-column: 2; }
+    }
+
+    @media (max-width: 650px) {
+      .topbar { padding: 10px 12px; gap: 8px; }
+      .logo { width: 40px; height: 40px; }
+      .search-wrap input { padding-right: 12px; }
+      .search-status { display: none; }
+      .actions .secondary-action { display: none; }
+      .main { padding: 24px 12px 60px; }
+      .hero { top: 72px; padding: 18px 20px; border-radius: 16px; }
+      .hero p { display: none; }
+      article { padding: 24px 18px; border-radius: 18px; }
+      .topic-navigation { grid-template-columns: 1fr 1fr; }
+      .topic-navigation .topic-position { grid-column: 1 / -1; grid-row: 1; }
+      .topic-navigation .previous { grid-column: 1; grid-row: 2; }
+      .topic-navigation .next { grid-column: 2; grid-row: 2; }
+      .topic-navigation button strong { max-width: 115px; }
+      .flow-branch, .architecture-services { grid-template-columns: 1fr; }
+      .architecture-data { grid-template-columns: 1fr 1fr; }
+      .step-flow { grid-template-columns: 1fr; gap: 24px; }
+      .step-card:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -23px; transform: translateX(50%); }
+      .visual-diagram { padding: 16px; }
+      .editor-toolbar { top: 72px; }
+      .editor-help { width: 100%; margin-left: 0; }
+      body.editing .edit-banner { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media print {
+      .topbar, .sidebar, .progress, .edit-banner, .editor-toolbar, .toast, .topic-navigation { display: none !important; }
+      .layout { display: block; padding: 0; }
+      .main { width: 100%; padding: 0; }
+      .hero { box-shadow: none; color: #111; background: none; border: 1px solid #ccc; }
+      article { border: 0; box-shadow: none; padding: 20px 0; }
+      .topic-section { display: block !important; }
+      details.subtopic > .subtopic-content { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <button class="btn mobile-menu" id="menuButton" aria-label="Show or hide contents" aria-expanded="true">☰ <span class="label">Contents</span></button>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">QA</div>
+      <div class="brand-copy"><strong>AI Quality Guide</strong><span>Editable learning workspace</span></div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="searchInput" type="search" placeholder="Search the guide…" aria-label="Search guide">
+      <span class="search-status" id="searchStatus">⌘ / Ctrl + K</span>
+    </div>
+    <div class="actions">
+      <button class="btn secondary-action" id="themeButton" aria-label="Toggle color theme"><span aria-hidden="true">◐</span><span class="label">Theme</span></button>
+      <button class="btn secondary-action" id="printButton" aria-label="Print guide"><span aria-hidden="true">▣</span><span class="label">Print</span></button>
+      <button class="btn primary" id="editButton" aria-pressed="false"><span aria-hidden="true">✎</span><span class="label">Edit content</span></button>
+    </div>
+  </header>
+  <div class="progress" id="progress"></div>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar" aria-label="Table of contents">
+      <p class="side-label">Contents</p>
+      <nav class="toc" id="toc"></nav>
+      <div class="sidebar-card">
+        <strong>Your edits stay private</strong>
+        Changes are saved in this browser. Use Download HTML to keep or share an edited copy.
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero" aria-labelledby="pageTitle">
+        <p class="eyebrow">Practical handbook</p>
+        <h1 id="pageTitle">From Manual QA to Agentic AI Testing</h1>
+        <p>Learn where human testing matters, how AI strengthens existing automation, and how to design a safe agentic testing platform.</p>
+      </section>
+
+      <div class="editor-toolbar" role="toolbar" aria-label="Content editing tools">
+        <button class="btn primary start-edit" id="editorEditButton" type="button">✎ Edit content</button>
+        <div class="format-tools" id="formatTools">
+          <button class="btn tool-btn" type="button" data-command="bold" aria-label="Bold selected text"><strong>B</strong></button>
+          <button class="btn tool-btn" type="button" data-command="italic" aria-label="Italicize selected text"><em>I</em></button>
+          <button class="btn tool-btn" type="button" data-command="insertUnorderedList" aria-label="Create bullet list">• List</button>
+          <button class="btn tool-btn" type="button" data-command="undo" aria-label="Undo change">↶ Undo</button>
+          <button class="btn tool-btn" type="button" data-command="redo" aria-label="Redo change">↷ Redo</button>
+          <button class="btn primary" id="editorSaveButton" type="button">Save changes</button>
+          <button class="btn" id="editorDownloadButton" type="button">Download edited HTML</button>
+        </div>
+        <span class="editor-help" id="editorHelp">Select Edit content, then click any text in the current topic.</span>
+      </div>
+
+      <div class="edit-banner" role="status">
+        <div><strong>Edit mode is active.</strong> Click anywhere in the guide and update the content.</div>
+        <div class="actions">
+          <span class="save-state" id="saveState">Saved locally</span>
+          <button class="btn" id="resetButton">Reset</button>
+          <button class="btn primary" id="downloadButton">Download HTML</button>
+        </div>
+      </div>
+
+      <article id="guide" aria-label="AI QA Engineer guide">
+<h1 id="from-manual-qa-to-agentic-ai-testing">From Manual QA to Agentic
+AI Testing</h1>
+<h2 id="a-practical-guide-for-qa-engineers">A practical guide for QA
+engineers</h2>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>AI does not remove the need for QA engineers or manual testing. It
+changes where human judgment is most valuable and which repetitive
+activities can be delegated to automation.</p>
+<p>Traditional automation follows predefined instructions:</p>
+<blockquote>
+<p>Open the login page → enter credentials → click Login → verify the
+dashboard.</p>
+</blockquote>
+<p>AI-assisted automation can work from a goal:</p>
+<blockquote>
+<p>Test the login experience for valid, invalid, locked, and unusual
+user scenarios. Explore the UI, execute appropriate tests, collect
+evidence, and report important defects.</p>
+</blockquote>
+<p>The strongest QA strategy combines:</p>
+<ul>
+<li>Human exploratory thinking</li>
+<li>Deterministic automation for stable, repeatable checks</li>
+<li>Generative AI for test design, analysis, and content creation</li>
+<li>AI agents for goal-driven execution and orchestration</li>
+<li>Human approval for risky or ambiguous decisions</li>
+</ul>
+<p>The objective is not “automate everything.” The objective is to
+achieve fast, trustworthy feedback at an acceptable cost and risk.</p>
+<hr />
+<h2 id="2-when-manual-testing-is-still-necessary">2. When manual testing
+is still necessary</h2>
+<p>Manual testing is necessary whenever human perception, judgment,
+investigation, or accountability is more valuable than execution
+speed.</p>
+<h3 id="21-exploratory-testing">2.1 Exploratory testing</h3>
+<p>Use manual testing when the tester must learn the system while
+testing it. An experienced tester notices unexpected behavior, changes
+direction, and forms new hypotheses.</p>
+<p><strong>Example:</strong> While testing an e-commerce checkout, a
+tester notices that changing the country resets the selected delivery
+method. This was not in the test case, but it may reveal a
+state-management defect.</p>
+<h3 id="22-usability-and-user-experience">2.2 Usability and user
+experience</h3>
+<p>Automation can verify that an element exists, but a person is better
+at deciding whether a workflow is confusing, frustrating, misleading, or
+inconsistent.</p>
+<p><strong>Example:</strong> The “Apply coupon” action technically
+works, but it is below the fold and gives no visible confirmation.
+Functional automation may pass; a human may identify a poor
+experience.</p>
+<h3 id="23-visual-and-emotional-judgment">2.3 Visual and emotional
+judgment</h3>
+<p>AI visual testing can identify layout differences, but humans should
+judge brand quality, readability, appropriateness, and emotional
+effect.</p>
+<p><strong>Example:</strong> A healthcare error message may be
+technically correct but unnecessarily frightening to patients.</p>
+<h3 id="24-new-unstable-or-rapidly-changing-features">2.4 New, unstable,
+or rapidly changing features</h3>
+<p>Automating an interface before its behavior stabilizes creates high
+maintenance cost. Early manual exploration helps the team discover
+expected behavior and select the right future regression checks.</p>
+<h3 id="25-complex-hardware-and-physical-interaction">2.5 Complex
+hardware and physical interaction</h3>
+<p>Devices, sensors, accessibility equipment, payment terminals,
+cameras, GPS, poor networks, and environmental conditions often need
+hands-on testing.</p>
+<h3 id="26-accessibility-validation">2.6 Accessibility validation</h3>
+<p>Automated scanners can detect missing labels, contrast issues, and
+structural violations, but they cannot fully judge whether a keyboard or
+screen-reader journey is understandable and efficient.</p>
+<h3 id="27-security-privacy-ethics-and-high-risk-decisions">2.7
+Security, privacy, ethics, and high-risk decisions</h3>
+<p>AI and automated tools can find signals, but qualified humans must
+review high-impact findings and decide whether the risk is
+acceptable.</p>
+<h3 id="28-one-time-or-low-value-checks">2.8 One-time or low-value
+checks</h3>
+<p>If a test will run once and is quick to perform, automation may cost
+more than the value it creates.</p>
+<h3 id="a-practical-decision-rule">A practical decision rule</h3>
+<figure class="visual-diagram" role="img" aria-label="Decision diagram comparing manual testing, deterministic automation, and AI-assisted testing">
+<figcaption>Choose the testing approach by the type of problem</figcaption>
+<div class="flow-branch">
+  <div class="flow-node human"><span><strong>Human-led testing</strong><br><small>Use judgment and exploration</small><br><br>Example: Is the checkout confusing for a first-time customer?</span></div>
+  <div class="flow-node"><span><strong>Deterministic automation</strong><br><small>Use repeatable steps and exact assertions</small><br><br>Example: Does a valid payment return status 200 and create an order?</span></div>
+  <div class="flow-node ai"><span><strong>AI-assisted testing</strong><br><small>Use interpretation and pattern analysis</small><br><br>Example: Which failures share the same probable cause across 500 test runs?</span></div>
+</div>
+<p class="diagram-note">Most mature QA processes use all three approaches together rather than choosing only one.</p>
+</figure>
+<table>
+<thead>
+<tr class="header">
+<th>Situation</th>
+<th>Recommended approach</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Stable, repetitive, high-volume regression</td>
+<td>Deterministic automation</td>
+</tr>
+<tr class="even">
+<td>New or unclear behavior</td>
+<td>Manual exploratory testing</td>
+</tr>
+<tr class="odd">
+<td>Many possible inputs with known rules</td>
+<td>Automation plus generated test data</td>
+</tr>
+<tr class="even">
+<td>Usability, accessibility, or emotional quality</td>
+<td>Human-led, AI-assisted testing</td>
+</tr>
+<tr class="odd">
+<td>Visual differences across many pages</td>
+<td>AI visual detection plus human review</td>
+</tr>
+<tr class="even">
+<td>Financial, medical, security, or destructive action</td>
+<td>Automation with mandatory human approval</td>
+</tr>
+<tr class="odd">
+<td>Unpredictable navigation or frequently changing UI</td>
+<td>Agentic exploration with strict guardrails</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-how-ai-can-automate-manual-testing-work">3. How AI can
+automate manual testing work</h2>
+<p>AI should be applied to individual QA activities before attempting
+full autonomy.</p>
+<h3 id="31-requirement-analysis">3.1 Requirement analysis</h3>
+<p>An LLM can read a story, acceptance criteria, API specification,
+design document, and historical defects. It can then identify:</p>
+<ul>
+<li>Missing or ambiguous requirements</li>
+<li>Business rules and dependencies</li>
+<li>Positive, negative, boundary, and abuse scenarios</li>
+<li>Test-data needs</li>
+<li>Traceability between requirements and tests</li>
+</ul>
+<p><strong>Example input:</strong> “A coupon gives 10% off orders above
+$100 and cannot be combined with another offer.”</p>
+<p><strong>AI-generated questions:</strong></p>
+<ul>
+<li>Is exactly $100 eligible?</li>
+<li>Is the threshold calculated before or after tax?</li>
+<li>What happens if the cart drops below the threshold after the coupon
+is applied?</li>
+<li>Is the rule the same for every currency?</li>
+</ul>
+<h3 id="32-test-case-generation">3.2 Test-case generation</h3>
+<p>AI can draft tests in natural language, Gherkin, JSON, or framework
+code. Generated tests must be validated against requirements and
+business rules.</p>
+<pre class="gherkin"><code>Scenario: Coupon is rejected when subtotal is below the threshold
+  Given a customer has items worth $99.99 in the cart
+  When the customer applies the ten-percent coupon
+  Then the coupon should not be applied
+  And the customer should see the eligibility requirement</code></pre>
+<h3 id="33-test-data-generation">3.3 Test-data generation</h3>
+<p>AI can generate synthetic users, addresses, boundary values, invalid
+formats, multilingual content, and combinations. Sensitive production
+data should not be sent to a model without approved controls.</p>
+<h3 id="34-converting-manual-tests-into-automation">3.4 Converting
+manual tests into automation</h3>
+<p>A practical pipeline is:</p>
+<ol type="1">
+<li>Read the manual test and associated requirement.</li>
+<li>Convert vague steps into explicit actions and assertions.</li>
+<li>Discover stable UI or API identifiers.</li>
+<li>Select the correct reusable page object, fixture, or API
+client.</li>
+<li>Generate code using the team’s approved templates.</li>
+<li>Run the test in an isolated environment.</li>
+<li>Repair only safe locator or synchronization problems.</li>
+<li>Ask for human review before merging.</li>
+</ol>
+<p>AI-generated code should pass the same review, linting, security
+scanning, and CI rules as human-written code.</p>
+<h3 id="35-self-healing-locators">3.5 Self-healing locators</h3>
+<p>When a selector changes, the system can compare attributes,
+accessible names, DOM relationships, and historical evidence to suggest
+a replacement.</p>
+<p><strong>Bad healing:</strong> Silently changing <code>Buy now</code>
+to a visually similar <code>Cancel order</code> button.</p>
+<p><strong>Safe healing:</strong> Proposing a candidate, showing the
+confidence and DOM evidence, rerunning the assertion, and requiring
+approval when confidence is below a threshold.</p>
+<h3 id="36-visual-testing">3.6 Visual testing</h3>
+<p>Computer vision can detect clipping, overlap, missing elements,
+unexpected spacing, broken responsive layouts, and differences from
+approved baselines. Dynamic areas should be masked, and meaningful
+differences should be reviewed by a person.</p>
+<h3 id="37-failure-analysis-and-defect-reporting">3.7 Failure analysis
+and defect reporting</h3>
+<p>AI can group similar failures, inspect screenshots, traces, console
+logs, network calls, and recent code changes, then draft a defect
+with:</p>
+<ul>
+<li>Summary and severity suggestion</li>
+<li>Reproduction steps</li>
+<li>Expected and actual behavior</li>
+<li>Environment and test data</li>
+<li>Evidence</li>
+<li>Probable component or owner</li>
+<li>Confidence and alternative explanations</li>
+</ul>
+<p>The model’s diagnosis is a hypothesis, not a proven root cause.</p>
+<h3 id="38-risk-based-regression-selection">3.8 Risk-based regression
+selection</h3>
+<p>AI can connect changed files to services, requirements, tests,
+ownership, and failure history. It can recommend a smaller test
+collection while keeping critical paths mandatory.</p>
+<h3
+id="39-we-already-have-rest-assured-playwright-selenium-and-appium-why-do-we-need-ai">3.9
+We already have Rest Assured, Playwright, Selenium, and Appium. Why do
+we need AI?</h3>
+<p><strong>Terminology note:</strong> A <strong>test suite</strong>
+simply means a group or collection of test cases that are executed
+together. This guide uses the clearer terms <strong>test
+collection</strong>, <strong>automated tests</strong>, or
+<strong>regression tests</strong> instead.</p>
+<p><strong>Example:</strong> A checkout test collection may contain
+tests for adding a product to the cart, applying a coupon, completing
+payment, validating an order, and cancelling an order.</p>
+<p>Rest Assured, Playwright, Selenium, and Appium are test execution
+frameworks. They are very good at performing explicit, repeatable steps
+and making deterministic assertions. AI is an intelligence layer that
+can help decide <strong>what to test, which tests to run, how to
+investigate a failure, and how to maintain the tests</strong>.</p>
+<p>They solve different parts of the quality problem:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Technology</th>
+<th>Primary job</th>
+<th>Strongest capability</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rest Assured</td>
+<td>API automation</td>
+<td>Reliable HTTP requests and deterministic API assertions</td>
+</tr>
+<tr class="even">
+<td>Playwright</td>
+<td>Modern web automation</td>
+<td>Fast browser control, auto-waiting, tracing, network control, and
+multi-browser testing</td>
+</tr>
+<tr class="odd">
+<td>Selenium</td>
+<td>Cross-browser web automation</td>
+<td>Mature ecosystem, broad browser support, and existing enterprise
+test collections</td>
+</tr>
+<tr class="even">
+<td>Appium</td>
+<td>Mobile automation</td>
+<td>Native, hybrid, and mobile-web automation across devices</td>
+</tr>
+<tr class="odd">
+<td>AI layer</td>
+<td>Reasoning and assistance</td>
+<td>Test design, semantic analysis, adaptive exploration, failure
+triage, and maintenance suggestions</td>
+</tr>
+</tbody>
+</table>
+<p>The recommended model is:</p>
+<blockquote>
+<p><strong>AI decides or recommends; established frameworks execute;
+deterministic assertions verify; humans govern.</strong></p>
+</blockquote>
+<h4 id="what-existing-frameworks-already-do-well">What existing
+frameworks already do well</h4>
+<p>Keep conventional automation for:</p>
+<ul>
+<li>Stable regression scenarios</li>
+<li>Exact API, UI, database, and business-rule assertions</li>
+<li>High-volume parallel execution</li>
+<li>Performance-sensitive CI feedback</li>
+<li>Contract and schema validation</li>
+<li>Compliance checks that require predictable behavior</li>
+<li>Reproducible tests with clear pass/fail conditions</li>
+</ul>
+<p>If a Playwright test reliably validates checkout, replacing it with
+an LLM-controlled browser would normally make it slower, more expensive,
+and less predictable.</p>
+<h4 id="problems-ai-can-help-solve-around-the-frameworks">Problems AI
+can help solve around the frameworks</h4>
+<p>Even a mature framework may still have expensive human work before
+and after execution:</p>
+<ul>
+<li>Understanding large or changing requirements</li>
+<li>Discovering missing test scenarios</li>
+<li>Creating boundary and negative test data</li>
+<li>Converting approved manual cases into starter automation code</li>
+<li>Identifying tests affected by a code change</li>
+<li>Classifying thousands of CI failures</li>
+<li>Separating product defects from environment and test-script
+problems</li>
+<li>Explaining logs, screenshots, videos, and traces</li>
+<li>Suggesting locator repairs for review</li>
+<li>Exploring unfamiliar workflows beyond predefined scripts</li>
+<li>Drafting defects and release-quality summaries</li>
+</ul>
+<p>AI targets these bottlenecks; it does not make the execution
+framework unnecessary.</p>
+<h3 id="310-should-we-switch-from-our-current-framework-to-ai">3.10
+Should we switch from our current framework to AI?</h3>
+<p><strong>Usually, no. Do not rewrite a healthy collection of automated
+tests merely to call it AI-powered.</strong> Preserve the investment in
+page objects, API clients, fixtures, utilities, device labs, reports,
+and CI pipelines. Add AI incrementally where it produces measurable
+value.</p>
+<p>Consider switching the underlying framework only for normal
+engineering reasons—for example, unsupported technology, unacceptable
+execution time, poor maintainability, missing platform coverage, or an
+obsolete architecture. “AI is popular” is not a valid migration
+reason.</p>
+<p>Use this decision table:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Current situation</th>
+<th>Recommended decision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Automated tests are stable, fast, and trusted</td>
+<td>Keep them; add AI only to selected supporting activities</td>
+</tr>
+<tr class="even">
+<td>Automated tests have many flaky failures</td>
+<td>Fix test design, isolation, waits, data, and environment first; AI
+may help diagnose patterns</td>
+</tr>
+<tr class="odd">
+<td>Selenium test collection is valuable but costly to maintain</td>
+<td>Improve the architecture or migrate selectively based on engineering
+value; do not assume an AI agent will remove maintenance</td>
+</tr>
+<tr class="even">
+<td>Manual regression is large and repetitive</td>
+<td>Automate stable flows with Playwright, Rest Assured, Selenium, or
+Appium; use AI to accelerate design and code drafting</td>
+</tr>
+<tr class="odd">
+<td>Product UI changes frequently</td>
+<td>Use stable contracts and test IDs first; add reviewed AI locator
+suggestions or bounded exploration</td>
+</tr>
+<tr class="even">
+<td>Team lacks test coverage knowledge</td>
+<td>Add RAG-based requirement and coverage analysis before autonomous
+execution</td>
+</tr>
+<tr class="odd">
+<td>Need unscripted exploration</td>
+<td>Add a supervised AI exploration agent while keeping deterministic
+regression</td>
+</tr>
+<tr class="even">
+<td>High-risk regulated product</td>
+<td>Keep traceable deterministic checks and mandatory human approval;
+use AI as assistance only</td>
+</tr>
+</tbody>
+</table>
+<h3
+id="311-recommended-hybrid-architecture-with-existing-frameworks">3.11
+Recommended hybrid architecture with existing frameworks</h3>
+<figure class="visual-diagram" role="img" aria-label="Hybrid QA architecture where AI plans, a human approves, established frameworks execute, and AI assists with evidence analysis">
+<figcaption>How AI works with your current automation frameworks</figcaption>
+<div class="flow-stack">
+  <div class="flow-node evidence">Requirements · code changes · testing goal</div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <div class="flow-node ai">AI planning: analyze risk and recommend tests</div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <div class="flow-node human">QA policy and human approval</div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <div class="flow-node">Test orchestrator selects the correct executor</div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <div class="flow-branch">
+    <div class="flow-node"><span>API<br><strong>Rest Assured</strong></span></div>
+    <div class="flow-node"><span>Web<br><strong>Playwright / Selenium</strong></span></div>
+    <div class="flow-node"><span>Mobile<br><strong>Appium</strong></span></div>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <div class="flow-node evidence">Deterministic assertions · logs · traces · screenshots</div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <div class="flow-node ai">AI-assisted triage and defect draft</div>
+</div>
+<p class="diagram-note">The frameworks execute and verify. AI improves planning and analysis. The QA engineer controls important decisions.</p>
+</figure>
+<p>In this design:</p>
+<ol type="1">
+<li>The AI layer reads approved requirements and change
+information.</li>
+<li>It recommends scenarios or selects relevant existing tests.</li>
+<li>A policy engine or person approves risky operations.</li>
+<li>The existing framework executes the test.</li>
+<li>Assertions remain in code whenever the expected result is
+objective.</li>
+<li>AI analyzes evidence and drafts a conclusion.</li>
+<li>The final report distinguishes proven facts from AI-generated
+hypotheses.</li>
+</ol>
+<h3 id="312-practical-examples-for-each-framework">3.12 Practical
+examples for each framework</h3>
+<h4 id="rest-assured-plus-ai">Rest Assured plus AI</h4>
+<p><strong>Without AI:</strong> A developer writes endpoint tests and
+manually studies failures.</p>
+<p><strong>With AI:</strong> The system reads the OpenAPI specification
+and requirements, proposes missing negative and boundary scenarios,
+generates a draft Rest Assured test, and summarizes failed
+request/response evidence. Rest Assured still sends requests and
+performs assertions.</p>
+<p><strong>Example:</strong> AI notices that <code>POST /refunds</code>
+has tests for valid amounts but no test for an amount greater than the
+captured payment. It proposes the missing case; a QA engineer approves
+it; Rest Assured executes it on every build.</p>
+<h4 id="playwright-plus-ai">Playwright plus AI</h4>
+<p><strong>Without AI:</strong> Playwright follows authored browser
+flows and collects traces.</p>
+<p><strong>With AI:</strong> AI converts approved scenarios into draft
+page-object code, recommends impacted tests, interprets traces, and
+performs a separate supervised exploratory session. Playwright remains
+the browser execution engine.</p>
+<p><strong>Example:</strong> When checkout fails, AI correlates the
+Playwright trace with a <code>500</code> payment response and drafts a
+defect pointing to the payment call instead of simply reporting “button
+click failed.”</p>
+<h4 id="selenium-plus-ai">Selenium plus AI</h4>
+<p><strong>Without AI:</strong> A mature Selenium grid runs a large
+collection of cross-browser regression tests.</p>
+<p><strong>With AI:</strong> AI groups related failures, detects likely
+locator changes, and proposes Page Object updates with confidence and
+evidence. High-confidence suggestions may run in a temporary branch, but
+they should not silently change the main test collection.</p>
+<p><strong>Example:</strong> Two hundred tests fail because a shared
+navigation locator changed. AI identifies the common Page Object,
+proposes one repair, reruns an affected subset, and requests review.</p>
+<h4 id="appium-plus-ai">Appium plus AI</h4>
+<p><strong>Without AI:</strong> Appium performs known interactions on
+emulators and real devices.</p>
+<p><strong>With AI:</strong> AI generates device and state combinations,
+reads screenshots and device logs, identifies likely platform-specific
+clusters, and guides exploratory flows.</p>
+<p><strong>Example:</strong> Android tests fail only under a small
+screen, large font, and dark mode. AI clusters the evidence and
+identifies a likely layout/accessibility risk; Appium reproduces the
+exact combination.</p>
+<h3
+id="313-incremental-ai-adoption-plan-for-an-existing-automation-team">3.13
+Incremental AI adoption plan for an existing automation team</h3>
+<h4 id="stage-1-measure-the-current-baseline">Stage 1: Measure the
+current baseline</h4>
+<p>Record execution time, flakiness, maintenance effort, defect yield,
+escaped defects, triage time, and automation cost. Without a baseline,
+the team cannot prove that AI helped.</p>
+<h4 id="stage-2-introduce-low-risk-assistance">Stage 2: Introduce
+low-risk assistance</h4>
+<p>Start with requirement analysis, test-case suggestions, failure
+summarization, documentation search, and defect drafting. A human
+reviews every result.</p>
+<h4 id="stage-3-connect-ai-to-framework-evidence">Stage 3: Connect AI to
+framework evidence</h4>
+<p>Provide structured access to Rest Assured request/response data,
+Playwright traces, Selenium logs, Appium device logs, screenshots, and
+historical defects. Redact sensitive data and enforce project
+permissions.</p>
+<h4 id="stage-4-allow-supervised-code-generation">Stage 4: Allow
+supervised code generation</h4>
+<p>Generate tests using approved templates, page objects, API clients,
+naming conventions, and assertion libraries. Run formatting,
+compilation, linting, security checks, and tests in an isolated branch.
+Require code review.</p>
+<h4 id="stage-5-add-bounded-agent-execution">Stage 5: Add bounded agent
+execution</h4>
+<p>Let an agent execute approved goals only in test environments, with
+allowlisted tools, limited steps, token and cost budgets, timeouts, and
+evidence capture.</p>
+<h4 id="stage-6-expand-only-after-evaluation">Stage 6: Expand only after
+evaluation</h4>
+<p>Increase autonomy only if evaluation shows accurate tool use,
+reliable stopping, useful defect discovery, lower maintenance effort,
+and acceptable cost and safety.</p>
+<h3 id="314-how-to-prove-whether-ai-is-better">3.14 How to prove whether
+AI is better</h3>
+<p>Do not compare tools based on a demo. Run a controlled pilot and
+measure:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Question to answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Test-design time</td>
+<td>Does AI reduce the time from requirement to approved test?</td>
+</tr>
+<tr class="even">
+<td>Human acceptance rate</td>
+<td>How many AI suggestions are accepted with little or no editing?</td>
+</tr>
+<tr class="odd">
+<td>Defect yield</td>
+<td>Does the AI-assisted process find meaningful additional
+defects?</td>
+</tr>
+<tr class="even">
+<td>False-positive rate</td>
+<td>How often does AI create unnecessary investigation?</td>
+</tr>
+<tr class="odd">
+<td>Flaky-test rate</td>
+<td>Does the approach improve or damage test reliability?</td>
+</tr>
+<tr class="even">
+<td>Mean time to triage</td>
+<td>Are failures understood faster?</td>
+</tr>
+<tr class="odd">
+<td>Maintenance effort</td>
+<td>Are engineers spending fewer hours repairing tests?</td>
+</tr>
+<tr class="even">
+<td>Execution time</td>
+<td>Does AI add unacceptable latency?</td>
+</tr>
+<tr class="odd">
+<td>Cost per useful result</td>
+<td>Are model and infrastructure costs justified?</td>
+</tr>
+<tr class="even">
+<td>Safety-policy compliance</td>
+<td>Does the system stay inside permissions and approval rules?</td>
+</tr>
+</tbody>
+</table>
+<p>A good pilot compares the normal workflow and AI-assisted workflow on
+the same representative features. Adopt the AI capability only when it
+improves a meaningful quality or productivity metric without creating
+unacceptable reliability, privacy, or security risk.</p>
+<h3
+id="315-final-recommendation-for-teams-with-existing-automation">3.15
+Final recommendation for teams with existing automation</h3>
+<p>Use a <strong>hybrid strategy</strong>:</p>
+<ul>
+<li>Keep Rest Assured for API execution and assertions.</li>
+<li>Prefer Playwright for suitable new web automation while retaining
+valuable Selenium coverage unless migration has a clear return.</li>
+<li>Keep Appium for mobile device interaction.</li>
+<li>Add AI for requirement intelligence, coverage discovery, test
+drafting, regression selection, exploratory assistance, failure triage,
+and reporting.</li>
+<li>Keep deterministic code responsible for objective pass/fail
+decisions.</li>
+<li>Require people to approve high-impact changes and ambiguous
+conclusions.</li>
+</ul>
+<p>The best future architecture is not <strong>frameworks versus
+AI</strong>. It is <strong>frameworks plus AI, connected through
+controlled tools and evaluated with evidence</strong>.</p>
+<h3 id="316-complete-example-using-a-current-automation-framework">3.16
+Complete example using a current automation framework</h3>
+<p>Assume a team already has:</p>
+<ul>
+<li>Rest Assured API tests</li>
+<li>Playwright web tests</li>
+<li>Appium mobile tests</li>
+<li>A CI pipeline that runs tests after every deployment</li>
+<li>PostgreSQL for test results and object storage for screenshots and
+traces</li>
+</ul>
+<p>The new requirement says:</p>
+<blockquote>
+<p>A registered customer can use a 10% coupon when the cart subtotal is
+at least $100. The coupon cannot be combined with another offer.</p>
+</blockquote>
+<h4 id="existing-approach-without-ai">Existing approach without AI</h4>
+<ol type="1">
+<li>A QA engineer reads the story.</li>
+<li>The engineer manually identifies scenarios.</li>
+<li>They write Rest Assured tests for the coupon API.</li>
+<li>They write Playwright tests for web checkout.</li>
+<li>They write Appium tests for the mobile checkout.</li>
+<li>CI executes the tests and produces reports.</li>
+<li>The engineer manually investigates every failure.</li>
+</ol>
+<p>This approach is reliable, but requirement analysis, code
+preparation, test selection, and failure investigation can require
+significant time.</p>
+<h4 id="improved-approach-with-ai-and-the-same-frameworks">Improved
+approach with AI and the same frameworks</h4>
+<p><strong>Step 1: AI analyzes the requirement</strong></p>
+<p>The AI retrieves the coupon requirement, API specification, existing
+tests, and previous coupon defects. It identifies important questions
+and cases:</p>
+<ul>
+<li>Is exactly $100 eligible?</li>
+<li>Is eligibility based on subtotal before or after tax?</li>
+<li>What if the cart value falls below $100 after removing an item?</li>
+<li>What happens when another offer is already active?</li>
+<li>Does the rule work the same way on web and mobile?</li>
+</ul>
+<p><strong>Step 2: A QA engineer approves the scenarios</strong></p>
+<p>The engineer removes irrelevant suggestions, answers requirement
+questions with the product owner, and approves the final test cases.</p>
+<p><strong>Step 3: AI drafts framework-specific test code</strong></p>
+<p>For Rest Assured, AI drafts an API test such as:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">given</span><span class="op">()</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">contentType</span><span class="op">(</span><span class="st">&quot;application/json&quot;</span><span class="op">)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">body</span><span class="op">(</span><span class="fu">couponRequest</span><span class="op">(</span><span class="st">&quot;SAVE10&quot;</span><span class="op">,</span> <span class="fl">100.00</span><span class="op">))</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">when</span><span class="op">()</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">post</span><span class="op">(</span><span class="st">&quot;/checkout/coupons&quot;</span><span class="op">)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span><span class="op">()</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">statusCode</span><span class="op">(</span><span class="dv">200</span><span class="op">)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">body</span><span class="op">(</span><span class="st">&quot;discountPercent&quot;</span><span class="op">,</span> <span class="fu">equalTo</span><span class="op">(</span><span class="dv">10</span><span class="op">));</span></span></code></pre></div>
+<p>For Playwright, AI drafts a test using the team's existing page
+objects:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test</span>(<span class="st">&#39;applies SAVE10 when subtotal is exactly $100&#39;</span><span class="op">,</span> <span class="kw">async</span> ({ page }) <span class="kw">=&gt;</span> {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> checkout <span class="op">=</span> <span class="kw">new</span> <span class="fu">CheckoutPage</span>(page)<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> checkout<span class="op">.</span><span class="fu">openCartWithSubtotal</span>(<span class="dv">100</span>)<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> checkout<span class="op">.</span><span class="fu">applyCoupon</span>(<span class="st">&#39;SAVE10&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">expect</span>(checkout<span class="op">.</span><span class="at">discount</span>)<span class="op">.</span><span class="fu">toHaveText</span>(<span class="st">&#39;$10.00&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">expect</span>(checkout<span class="op">.</span><span class="at">total</span>)<span class="op">.</span><span class="fu">toHaveText</span>(<span class="st">&#39;$90.00&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p>For Appium, AI uses the existing screen objects and proposes the
+equivalent mobile scenario. The team reviews all generated code before
+merging it.</p>
+<p><strong>Step 4: Existing frameworks execute the tests</strong></p>
+<p>Rest Assured validates the API, Playwright validates the browser
+journey, and Appium validates the mobile journey. Assertions in code—not
+the AI model—determine whether objective conditions pass or fail.</p>
+<p><strong>Step 5: AI assists with failure analysis</strong></p>
+<p>Suppose the Playwright test fails because the UI shows
+<code>$100.00</code>, not <code>$90.00</code>. AI examines the trace and
+network response:</p>
+<ul>
+<li>Coupon API response: <code>200 OK</code></li>
+<li>Returned discount: <code>10</code></li>
+<li>Browser console: no error</li>
+<li>UI total: still <code>$100.00</code></li>
+</ul>
+<p>AI drafts this hypothesis:</p>
+<blockquote>
+<p>The coupon service calculated the discount correctly, but the web UI
+did not refresh the displayed total after receiving the response.</p>
+</blockquote>
+<p>The report labels this as a hypothesis. The screenshot, trace,
+response, and deterministic assertion are the actual evidence.</p>
+<p><strong>Step 6: Human reviews and publishes the defect</strong></p>
+<p>The QA engineer confirms the behavior and publishes the defect. AI
+saves investigation time, while the current frameworks continue to
+provide reliable execution and evidence.</p>
+<h4 id="final-result">Final result</h4>
+<table>
+<thead>
+<tr class="header">
+<th>Activity</th>
+<th>Responsible component</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Understand the requirement and suggest scenarios</td>
+<td>AI assistant</td>
+</tr>
+<tr class="even">
+<td>Approve business meaning and risk</td>
+<td>QA engineer/product owner</td>
+</tr>
+<tr class="odd">
+<td>Execute API checks</td>
+<td>Rest Assured</td>
+</tr>
+<tr class="even">
+<td>Execute web checks</td>
+<td>Playwright or Selenium</td>
+</tr>
+<tr class="odd">
+<td>Execute mobile checks</td>
+<td>Appium</td>
+</tr>
+<tr class="even">
+<td>Determine objective pass/fail</td>
+<td>Assertions in automation code</td>
+</tr>
+<tr class="odd">
+<td>Analyze logs, traces, and screenshots</td>
+<td>AI-assisted triage</td>
+</tr>
+<tr class="even">
+<td>Confirm root cause and publish defect</td>
+<td>QA engineer/developer</td>
+</tr>
+</tbody>
+</table>
+<p>This example demonstrates the recommended principle: <strong>keep the
+current automation framework and add AI where reasoning and analysis
+provide additional value.</strong></p>
+<hr />
+<h2 id="4-essential-ai-terms-for-qa-engineers">4. Essential AI terms for
+QA engineers</h2>
+<h3 id="41-generative-ai">4.1 Generative AI</h3>
+<p>Generative AI produces new content—text, code, images, audio, or
+structured data—based on learned patterns.</p>
+<p><strong>QA example:</strong> Generate boundary tests and Playwright
+code from acceptance criteria.</p>
+<p><strong>Limitation:</strong> The output can be fluent but wrong.
+Always validate it with requirements, executable checks, and human
+review.</p>
+<h3 id="42-tokenization">4.2 Tokenization</h3>
+<p>Tokenization divides text into units called tokens that a model
+processes. A token may be a word, part of a word, punctuation, or
+whitespace pattern.</p>
+<p><strong>Real-life analogy:</strong> Packing a document into small
+labeled pieces before sending it through a processing line.</p>
+<p><strong>Why QA engineers care:</strong></p>
+<ul>
+<li>Model limits and API cost are measured largely in tokens.</li>
+<li>Long logs can crowd important requirements out of the context
+window.</li>
+<li>Chunking and filtering improve both cost and answer quality.</li>
+<li>Secrets and personal data remain sensitive even when tokenized.</li>
+</ul>
+<p><strong>Example:</strong> Instead of sending a 100 MB log, extract
+the failing time window, correlated request ID, error stack, and
+surrounding events.</p>
+<h3 id="43-embeddings-and-vector-databases">4.3 Embeddings and vector
+databases</h3>
+<p>An embedding is a numeric representation of meaning. Similar content
+tends to have nearby vectors. A vector database stores embeddings and
+retrieves items by semantic similarity rather than exact keyword
+match.</p>
+<p><strong>Real-life analogy:</strong> A librarian who groups books by
+meaning even when their titles use different words.</p>
+<p><strong>QA example:</strong> A new failure says “payment
+authorization timed out.” Vector search may retrieve previous defects
+about “gateway response delay” even though the words differ.</p>
+<p>Common stored items include requirements, test cases, defects,
+runbooks, code documentation, and failure summaries. Each item should
+carry metadata such as project, version, service, access level, document
+source, and timestamp.</p>
+<h3 id="44-rag-retrieval-augmented-generation">4.4 RAG:
+Retrieval-Augmented Generation</h3>
+<p>RAG retrieves relevant trusted information and includes it in the
+prompt before the model produces an answer.</p>
+<figure class="visual-diagram" role="img" aria-label="Four-step RAG process from a QA question to an evidence-based answer">
+<figcaption>RAG turns company knowledge into a grounded QA answer</figcaption>
+<div class="step-flow">
+  <div class="step-card"><span class="step-number">1</span><strong>Ask</strong><small>“Which refund cases are missing?”</small></div>
+  <div class="step-card"><span class="step-number">2</span><strong>Retrieve</strong><small>Requirements, API schema, existing tests, and defects</small></div>
+  <div class="step-card"><span class="step-number">3</span><strong>Generate</strong><small>The LLM creates test suggestions using retrieved context</small></div>
+  <div class="step-card"><span class="step-number">4</span><strong>Verify</strong><small>QA reviews each suggestion and its source evidence</small></div>
+</div>
+<p class="diagram-note">Without retrieval, the model relies mostly on general knowledge. With RAG, it can use your approved project information.</p>
+</figure>
+<p><strong>QA example:</strong> Before generating tests for refunds, the
+system retrieves the refund requirement, API schema, existing tests, and
+related production defects. The model generates tests from this
+company-specific context instead of relying only on general
+knowledge.</p>
+<p>Good RAG requires quality documents, correct chunking, metadata
+filters, permission enforcement, reranking, citations, and freshness
+controls. RAG reduces hallucination; it does not eliminate it.</p>
+<h3 id="45-mcp-model-context-protocol">4.5 MCP: Model Context
+Protocol</h3>
+<p>MCP is a standard way for an AI application to discover and use
+external tools and contextual resources through consistent
+interfaces.</p>
+<p><strong>Real-life analogy:</strong> USB provides a standard
+connection for different devices; MCP provides a common connection
+pattern for models, tools, and data sources.</p>
+<p><strong>QA example:</strong> An agent may use MCP-compatible servers
+to:</p>
+<ul>
+<li>Read a test case from a test-management tool</li>
+<li>Control a browser or mobile emulator</li>
+<li>Query a read-only test database</li>
+<li>inspect CI results</li>
+<li>Create a draft defect</li>
+</ul>
+<p>MCP is a connection protocol, not the AI model and not the agent
+itself. Every tool should have explicit permissions, validated inputs,
+audit logs, timeouts, and safe defaults.</p>
+<h3 id="46-temperature">4.6 Temperature</h3>
+<p>Temperature influences variation in model output. Lower values
+generally produce more consistent responses; higher values allow more
+variety.</p>
+<table>
+<thead>
+<tr class="header">
+<th>QA task</th>
+<th>Typical preference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Generate strict JSON or executable test steps</td>
+<td>Low temperature</td>
+</tr>
+<tr class="even">
+<td>Summarize a failure consistently</td>
+<td>Low temperature</td>
+</tr>
+<tr class="odd">
+<td>Brainstorm unusual edge cases</td>
+<td>Moderate temperature</td>
+</tr>
+<tr class="even">
+<td>Explore creative user personas</td>
+<td>Moderate to higher temperature</td>
+</tr>
+</tbody>
+</table>
+<p>Temperature does not measure truth or confidence. A low-temperature
+answer can still be incorrect. Exact supported ranges and behavior vary
+by model.</p>
+<h3 id="47-prompt-engineering">4.7 Prompt engineering</h3>
+<p>Prompt engineering is the design of instructions, context,
+constraints, examples, and output formats that guide a model toward a
+useful result.</p>
+<p>A strong QA prompt contains:</p>
+<ol type="1">
+<li><strong>Role:</strong> “You are a senior payments QA engineer.”</li>
+<li><strong>Goal:</strong> “Design risk-based checkout tests.”</li>
+<li><strong>Context:</strong> Requirements, API schema, supported
+countries, existing coverage.</li>
+<li><strong>Constraints:</strong> “Do not invent endpoints; mark missing
+information.”</li>
+<li><strong>Output schema:</strong> JSON fields or a test-case
+table.</li>
+<li><strong>Quality rules:</strong> Include boundaries, negative cases,
+and requirement references.</li>
+<li><strong>Examples:</strong> One approved sample when consistency
+matters.</li>
+</ol>
+<p><strong>Weak prompt:</strong> “Write tests for checkout.”</p>
+<p><strong>Improved prompt:</strong> “Using only the attached checkout
+requirement and OpenAPI schema, generate prioritized API tests. For each
+test return requirement ID, preconditions, request, expected status,
+business assertions, risk, and automation suitability. Mark unresolved
+questions instead of inventing rules.”</p>
+<p>Prompt injection is a major testing concern. Retrieved documents and
+web pages are untrusted data; they must not be allowed to override
+system policy or tool permissions.</p>
+<h3 id="48-ai-agent">4.8 AI agent</h3>
+<p>An AI agent is a system that uses a model to interpret a goal, choose
+actions, call tools, observe results, and continue until it reaches a
+stopping condition.</p>
+<p><strong>Example:</strong> “Verify that a new customer can buy an
+in-stock product.” The agent opens a browser, creates data through an
+approved API, navigates the product and checkout pages, verifies the
+order, saves evidence, and reports the outcome.</p>
+<h3 id="49-agentic-ai">4.9 Agentic AI</h3>
+<p>Agentic AI describes systems that demonstrate goal-directed,
+multi-step behavior with planning, tool use, memory, reflection, and
+adaptation. An AI agent is a concrete component; agentic AI is the
+broader behavior or system design.</p>
+<p><strong>Real-life analogy:</strong> Generative AI is a chef
+suggesting a recipe. An agent receives the goal “prepare dinner,” checks
+ingredients, uses kitchen tools, adjusts when an ingredient is missing,
+and presents the result.</p>
+<h3 id="410-deterministic-workflow-versus-agent">4.10 Deterministic
+workflow versus agent</h3>
+<p>Use normal code when the path and rules are known. Use an agent when
+the route is uncertain and interpretation adds value.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Need</th>
+<th>Better choice</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Run 2,000 known regression tests</td>
+<td>Deterministic test runner</td>
+</tr>
+<tr class="even">
+<td>Explore an unfamiliar UI for risk areas</td>
+<td>Agent with browser tools</td>
+</tr>
+<tr class="odd">
+<td>Calculate pass percentage</td>
+<td>Normal code or SQL</td>
+</tr>
+<tr class="even">
+<td>Explain clusters of failures</td>
+<td>LLM-assisted analysis</td>
+</tr>
+<tr class="odd">
+<td>Perform a production data deletion</td>
+<td>Deterministic workflow plus human approval; not an autonomous
+agent</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-roadmap-qa-engineer-to-ai-testing-engineer">5. Roadmap: QA
+engineer to AI testing engineer</h2>
+<h3 id="phase-1-strengthen-core-qa-skills">Phase 1: Strengthen core QA
+skills</h3>
+<ul>
+<li>Test design: equivalence partitioning, boundaries, decision tables,
+state transitions, pairwise testing</li>
+<li>Exploratory testing and risk analysis</li>
+<li>API, UI, database, mobile, accessibility, performance, and security
+fundamentals</li>
+<li>HTTP, JSON, authentication, logs, networks, and browser developer
+tools</li>
+<li>Git and CI/CD basics</li>
+</ul>
+<p><strong>Deliverable:</strong> A risk-based test strategy for one real
+product feature.</p>
+<h3 id="phase-2-learn-programming-and-conventional-automation">Phase 2:
+Learn programming and conventional automation</h3>
+<ul>
+<li>Choose Python or TypeScript</li>
+<li>Learn functions, classes, asynchronous operations, packages, error
+handling, and testing</li>
+<li>UI automation: Playwright, Selenium, or an approved equivalent</li>
+<li>API automation and contract testing</li>
+<li>SQL and test-data management</li>
+<li>Docker and CI execution</li>
+<li>Page/component objects, fixtures, mocks, and reporting</li>
+</ul>
+<p><strong>Deliverable:</strong> A maintainable collection of UI and API
+tests running in CI.</p>
+<h3 id="phase-3-learn-applied-ai-fundamentals">Phase 3: Learn applied AI
+fundamentals</h3>
+<ul>
+<li>LLMs, tokens, context windows, embeddings, vector search, RAG,
+temperature</li>
+<li>Structured outputs and schema validation</li>
+<li>Prompt design and evaluation</li>
+<li>Model limitations, hallucination, bias, privacy, security, and
+cost</li>
+</ul>
+<p><strong>Deliverable:</strong> A requirement-to-test generator that
+returns schema-validated test cases with requirement references.</p>
+<h3 id="phase-4-build-ai-assisted-qa-capabilities">Phase 4: Build
+AI-assisted QA capabilities</h3>
+<ul>
+<li>Failure summarization and clustering</li>
+<li>Test-case generation with RAG</li>
+<li>Synthetic test-data generation</li>
+<li>Locator suggestions and visual comparison</li>
+<li>Change-impact and regression selection</li>
+<li>AI evaluation datasets and quality metrics</li>
+</ul>
+<p><strong>Deliverable:</strong> A QA assistant grounded in approved
+project documentation.</p>
+<h3 id="phase-5-learn-agent-engineering">Phase 5: Learn agent
+engineering</h3>
+<ul>
+<li>Tool calling and MCP concepts</li>
+<li>State machines and workflow orchestration</li>
+<li>Short-term and long-term memory</li>
+<li>Planning, retries, timeouts, idempotency, and stopping
+conditions</li>
+<li>Human-in-the-loop approvals</li>
+<li>Observability, security, and cost controls</li>
+</ul>
+<p><strong>Deliverable:</strong> A supervised test agent that executes a
+goal in an isolated test environment and produces evidence.</p>
+<h3 id="phase-6-productionize-and-govern">Phase 6: Productionize and
+govern</h3>
+<ul>
+<li>Multi-tenant access controls</li>
+<li>Secrets management and audit trails</li>
+<li>Prompt/model/version tracking</li>
+<li>Evaluation gates and canary releases</li>
+<li>Reliability, scalability, disaster recovery, and budget limits</li>
+<li>OWASP risks for LLM and agent applications</li>
+</ul>
+<p><strong>Deliverable:</strong> A measurable platform with
+service-level objectives, security review, and rollback capability.</p>
+<h3 id="suggested-24-week-learning-plan">Suggested 24-week learning
+plan</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Weeks</th>
+<th>Focus</th>
+<th>Project outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1–4</td>
+<td>Python/TypeScript, Git, APIs, SQL</td>
+<td>API test collection</td>
+</tr>
+<tr class="even">
+<td>5–8</td>
+<td>Playwright and CI/CD</td>
+<td>UI regression tests in CI</td>
+</tr>
+<tr class="odd">
+<td>9–12</td>
+<td>LLM fundamentals and prompting</td>
+<td>Structured test generator</td>
+</tr>
+<tr class="even">
+<td>13–16</td>
+<td>Embeddings, vector DB, and RAG</td>
+<td>Grounded QA knowledge assistant</td>
+</tr>
+<tr class="odd">
+<td>17–20</td>
+<td>Tool calling, MCP, workflows</td>
+<td>Browser test agent</td>
+</tr>
+<tr class="even">
+<td>21–24</td>
+<td>Evaluations, security, observability</td>
+<td>Production-ready pilot</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-architecture-for-an-agentic-ai-automation-platform">6.
+Architecture for an agentic AI automation platform</h2>
+<h3 id="61-guiding-principles">6.1 Guiding principles</h3>
+<ul>
+<li>Keep deterministic test execution separate from probabilistic
+reasoning.</li>
+<li>Treat the LLM as an untrusted decision-support component.</li>
+<li>Give each tool the minimum necessary permission.</li>
+<li>Run browser, mobile, and code actions in isolated disposable
+workers.</li>
+<li>Require approval for high-risk actions.</li>
+<li>Store evidence and make every agent action auditable.</li>
+<li>Measure quality, latency, cost, and safety—not only pass/fail.</li>
+</ul>
+<h3 id="62-high-level-system-architecture">6.2 High-level system
+architecture</h3>
+<figure class="visual-diagram" role="img" aria-label="Layered architecture for an agentic AI testing platform including user interface, backend, orchestration, AI, tools, Redis, workers, test targets, and data stores">
+<figcaption>Production architecture for an agentic AI testing platform</figcaption>
+<div class="architecture-core">
+  <p class="layer-label">User and delivery layer</p>
+  <div class="flow-node evidence">Web UI · IDE extension · CI pipeline</div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <p class="layer-label">Application layer</p>
+  <div class="flow-node">API gateway and backend services</div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <div class="flow-node ai">Workflow and agent orchestrator<br><small>plans · controls permissions · enforces budgets · records decisions</small></div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <p class="layer-label">Intelligence and control layer</p>
+  <div class="architecture-services">
+    <div class="mini-node">Model gateway<br>+ RAG</div>
+    <div class="mini-node">MCP and approved<br>tool gateway</div>
+    <div class="mini-node">Redis queue<br>+ short-term state</div>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <p class="layer-label">Execution layer</p>
+  <div class="flow-node human">Isolated test workers → Web · Mobile · API · Test database</div>
+  <div class="flow-arrow" aria-hidden="true">↓</div>
+  <p class="layer-label">Durable data and observability</p>
+  <div class="architecture-data">
+    <div class="mini-node">PostgreSQL<br><small>runs and approvals</small></div>
+    <div class="mini-node">Vector database<br><small>semantic knowledge</small></div>
+    <div class="mini-node">Object storage<br><small>screenshots and traces</small></div>
+    <div class="mini-node">Observability<br><small>logs, metrics, audit</small></div>
+  </div>
+</div>
+<p class="diagram-note">Redis coordinates temporary work; PostgreSQL and object storage keep durable records and evidence.</p>
+</figure>
+<h3 id="63-frontend">6.3 Frontend</h3>
+<p>Possible technology: React or Next.js with TypeScript.</p>
+<p>Core screens:</p>
+<ul>
+<li>Projects, environments, and access control</li>
+<li>Requirement and test-case workspace</li>
+<li>Natural-language goal submission</li>
+<li>Execution timeline showing planned and completed actions</li>
+<li>Live browser or device session</li>
+<li>Evidence viewer for screenshots, video, trace, logs, and network
+activity</li>
+<li>Human approval panel</li>
+<li>Defect review and publishing</li>
+<li>Analytics for coverage, flakiness, cost, latency, and model
+quality</li>
+</ul>
+<p>Important UX rule: show what the agent intends to do, what it
+actually did, which evidence supports the conclusion, and what remains
+uncertain.</p>
+<h3 id="64-backend-services">6.4 Backend services</h3>
+<p>A modular monolith is usually the best starting point. Split into
+services only when scaling, ownership, or security boundaries justify
+it.</p>
+<p>Recommended modules:</p>
+<ul>
+<li><strong>Identity and access:</strong> SSO, RBAC/ABAC, tenant
+isolation</li>
+<li><strong>Project service:</strong> applications, environments,
+configurations</li>
+<li><strong>Knowledge service:</strong> ingestion, parsing, chunking,
+embeddings, retrieval</li>
+<li><strong>Test management:</strong> requirements, cases, test
+collections, coverage, versions</li>
+<li><strong>Run service:</strong> execution lifecycle, status,
+cancellation, evidence</li>
+<li><strong>Agent orchestrator:</strong> state machine, planning, tool
+selection, budgets, stopping rules</li>
+<li><strong>Model gateway:</strong> provider abstraction, prompt
+templates, model routing, structured outputs, token and cost
+tracking</li>
+<li><strong>Tool gateway:</strong> approved MCP/tools, input validation,
+permissions, rate limits</li>
+<li><strong>Defect integration:</strong> draft and publish issues after
+review</li>
+<li><strong>Evaluation service:</strong> offline datasets and online
+quality checks</li>
+<li><strong>Notification service:</strong> run completion and approval
+requests</li>
+</ul>
+<h3 id="65-data-layer">6.5 Data layer</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Storage</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PostgreSQL</td>
+<td>Users, projects, requirements, tests, runs, defects, approvals,
+audit metadata</td>
+</tr>
+<tr class="even">
+<td>Redis</td>
+<td>Short-lived agent state, job queues, distributed locks, caching,
+rate limiting, pub/sub</td>
+</tr>
+<tr class="odd">
+<td>Vector database</td>
+<td>Embeddings for requirements, tests, defects, documentation, and
+failure knowledge</td>
+</tr>
+<tr class="even">
+<td>Object storage</td>
+<td>Screenshots, videos, traces, logs, reports, uploaded documents</td>
+</tr>
+<tr class="odd">
+<td>Analytics store, optional</td>
+<td>High-volume run events and historical trend queries</td>
+</tr>
+</tbody>
+</table>
+<p>Redis should not be the only durable record of a test run. Persist
+important state transitions and results in PostgreSQL.</p>
+<p>PostgreSQL with a vector extension is often enough for an initial
+platform. A specialized vector database becomes useful when semantic
+data volume, filtering, latency, or independent scaling requires it.</p>
+<h3 id="66-agent-components">6.6 Agent components</h3>
+<ul>
+<li><strong>Planner:</strong> converts a goal into bounded tasks.</li>
+<li><strong>Retriever:</strong> obtains relevant requirements, prior
+tests, and rules.</li>
+<li><strong>Executor:</strong> invokes approved tools.</li>
+<li><strong>Observer:</strong> converts tool results into structured
+observations.</li>
+<li><strong>Verifier:</strong> checks whether evidence satisfies
+assertions.</li>
+<li><strong>Critic:</strong> challenges weak conclusions and detects
+missing evidence.</li>
+<li><strong>Policy engine:</strong> blocks prohibited or high-risk
+actions.</li>
+<li><strong>Memory manager:</strong> retains run state and approved
+reusable knowledge.</li>
+<li><strong>Reporter:</strong> produces a traceable result and defect
+draft.</li>
+</ul>
+<p>These are logical roles; they do not require separate LLMs or
+microservices. Begin with one orchestrated workflow and separate roles
+only when evaluation shows a benefit.</p>
+<h3 id="67-example-execution-flow">6.7 Example execution flow</h3>
+<p>Goal: “Verify that a registered customer can buy an in-stock product
+using a valid card in staging.”</p>
+<ol type="1">
+<li>Authenticate the requester and check permissions.</li>
+<li>Retrieve checkout requirements and approved test data rules.</li>
+<li>Build a constrained plan and estimate cost/time.</li>
+<li>Create isolated test data using an approved API.</li>
+<li>Start an isolated Playwright worker.</li>
+<li>Navigate the UI using accessible roles and stable identifiers.</li>
+<li>Observe UI, network calls, console logs, and backend status.</li>
+<li>Assert order confirmation, payment status, and persisted order
+data.</li>
+<li>Save screenshots, traces, tool calls, and assertion evidence.</li>
+<li>Clean up test data with an idempotent workflow.</li>
+<li>Summarize the result and confidence.</li>
+<li>If a failure is found, draft a defect; require review before
+publishing.</li>
+</ol>
+<h3 id="68-api-design-examples">6.8 API design examples</h3>
+<pre class="text"><code>POST   /v1/test-goals
+GET    /v1/runs/{runId}
+POST   /v1/runs/{runId}/cancel
+POST   /v1/runs/{runId}/approvals/{approvalId}
+GET    /v1/runs/{runId}/events
+GET    /v1/runs/{runId}/evidence
+POST   /v1/knowledge/sources
+POST   /v1/evaluations</code></pre>
+<p>Use server-sent events or WebSockets for live progress. Every
+mutating request should support authorization, validation, correlation
+IDs, and—where needed—idempotency keys.</p>
+<h3 id="69-security-and-safety-controls">6.9 Security and safety
+controls</h3>
+<ul>
+<li>Secrets in a secrets manager, never in prompts or source
+control</li>
+<li>Separate credentials for each environment and tool</li>
+<li>Read-only database access by default</li>
+<li>Domain and endpoint allowlists</li>
+<li>Sandboxed, disposable workers with time and resource limits</li>
+<li>Data-loss prevention and personal-data redaction</li>
+<li>Prompt-injection defenses and separation of instructions from
+retrieved content</li>
+<li>Tool schemas with strict validation</li>
+<li>Approval gates for destructive actions, production access, defect
+publication, and code merge</li>
+<li>Complete audit trail of prompts, model/version, retrieved sources,
+tool inputs, outputs, and decisions</li>
+<li>Retention and deletion policies for evidence</li>
+</ul>
+<h3 id="610-reliability-patterns">6.10 Reliability patterns</h3>
+<ul>
+<li>Explicit state machine instead of an uncontrolled reasoning
+loop</li>
+<li>Maximum steps, time, tokens, and monetary budget per run</li>
+<li>Retry only transient failures; use exponential backoff</li>
+<li>Idempotent test-data setup and cleanup</li>
+<li>Circuit breakers for unavailable models or tools</li>
+<li>Dead-letter queue for failed jobs</li>
+<li>Checkpoints so a run can resume safely</li>
+<li>Deterministic assertions outside the LLM whenever possible</li>
+<li>Graceful fallback to a standard test runner or manual review</li>
+</ul>
+<h3 id="611-observability-and-evaluation">6.11 Observability and
+evaluation</h3>
+<p>Track three groups of metrics:</p>
+<p><strong>Test-platform metrics</strong></p>
+<ul>
+<li>Pass, fail, blocked, and flaky rates</li>
+<li>Queue time and execution duration</li>
+<li>Coverage and escaped-defect trends</li>
+<li>Environment and infrastructure failures</li>
+</ul>
+<p><strong>AI quality metrics</strong></p>
+<ul>
+<li>Test relevance and requirement coverage</li>
+<li>Unsupported-claim or hallucination rate</li>
+<li>Retrieval precision/recall</li>
+<li>Tool-selection and argument accuracy</li>
+<li>Defect deduplication accuracy</li>
+<li>Human acceptance/edit rate</li>
+</ul>
+<p><strong>Operational metrics</strong></p>
+<ul>
+<li>Tokens and cost per run</li>
+<li>Model and tool latency</li>
+<li>Retry rate</li>
+<li>Approval frequency</li>
+<li>Safety-policy violations</li>
+</ul>
+<p>Create a versioned evaluation set containing representative
+requirements, expected tests, known defects, tool tasks, adversarial
+prompts, and expected safe behavior. Run it whenever prompts, models,
+tools, retrieval, or policies change.</p>
+<h3 id="612-recommended-mvp">6.12 Recommended MVP</h3>
+<p>Do not begin with a fully autonomous multi-agent platform. Build this
+vertical slice:</p>
+<ol type="1">
+<li>Upload or connect approved requirements.</li>
+<li>Retrieve relevant context with citations.</li>
+<li>Generate structured test scenarios.</li>
+<li>Let a human approve selected scenarios.</li>
+<li>Execute them through Playwright in an isolated worker.</li>
+<li>Collect screenshots, trace, logs, and assertions.</li>
+<li>Draft a result and defect for human review.</li>
+</ol>
+<p>Suggested starter stack:</p>
+<ul>
+<li>Frontend: Next.js + TypeScript</li>
+<li>Backend: FastAPI or NestJS</li>
+<li>Workflow: explicit state machine; add a durable workflow engine when
+needed</li>
+<li>Database: PostgreSQL</li>
+<li>Cache/queue: Redis</li>
+<li>Vector search: PostgreSQL vector extension initially</li>
+<li>Execution: Playwright workers in Docker/Kubernetes</li>
+<li>Evidence: S3-compatible object storage</li>
+<li>Observability: OpenTelemetry plus logs, metrics, and traces</li>
+<li>AI: model gateway with structured outputs, RAG, evaluation, and
+budget controls</li>
+</ul>
+<hr />
+<h2 id="7-common-mistakes-to-avoid">7. Common mistakes to avoid</h2>
+<ul>
+<li>Automating unstable workflows before understanding them</li>
+<li>Allowing the model to decide pass/fail without deterministic
+evidence</li>
+<li>Giving an agent broad production permissions</li>
+<li>Treating self-healing as permission to hide product changes</li>
+<li>Storing every interaction as permanent memory</li>
+<li>Using a vector database without document permissions and metadata
+filters</li>
+<li>Sending complete logs when a correlated excerpt is enough</li>
+<li>Measuring only the number of generated tests instead of
+defect-detection value</li>
+<li>Building many agents before a single workflow works reliably</li>
+<li>Assuming RAG guarantees correctness</li>
+<li>Letting generated code merge without review and CI checks</li>
+</ul>
+<hr />
+<h2 id="8-interview-and-training-questions-with-answers">8. Interview
+and training questions with answers</h2>
+<h3 id="q1-will-ai-replace-manual-testing">Q1. Will AI replace manual
+testing?</h3>
+<p><strong>Answer:</strong> No. AI will automate repetitive preparation,
+execution, and analysis, while humans remain essential for exploration,
+usability, risk judgment, ethics, and final accountability. The role
+shifts toward test strategy, evaluation, and supervision of intelligent
+automation.</p>
+<h3
+id="q2-what-is-the-difference-between-automation-and-agentic-automation">Q2.
+What is the difference between automation and agentic automation?</h3>
+<p><strong>Answer:</strong> Traditional automation follows a predefined
+path. Agentic automation receives a goal, selects from approved actions,
+observes results, and adapts within guardrails. Known high-volume checks
+should remain deterministic; agents are useful when the route requires
+interpretation.</p>
+<h3 id="q3-what-is-rag-and-why-is-it-useful-in-qa">Q3. What is RAG, and
+why is it useful in QA?</h3>
+<p><strong>Answer:</strong> RAG retrieves relevant trusted information
+before generating an answer. In QA it grounds generated tests or failure
+explanations in current requirements, API specifications, existing
+coverage, and defect history.</p>
+<h3
+id="q4-what-is-the-difference-between-a-vector-database-and-a-relational-database">Q4.
+What is the difference between a vector database and a relational
+database?</h3>
+<p><strong>Answer:</strong> A relational database is optimized for
+structured records and exact filtering or joins. A vector database is
+optimized for semantic similarity. A QA platform normally needs both:
+PostgreSQL for authoritative test/run records and vector search for
+meaning-based knowledge retrieval.</p>
+<h3 id="q5-is-mcp-the-same-as-an-ai-agent">Q5. Is MCP the same as an AI
+agent?</h3>
+<p><strong>Answer:</strong> No. MCP standardizes how an AI application
+connects to tools and resources. An agent is the decision-making
+workflow that chooses when and how to use those tools.</p>
+<h3 id="q6-what-temperature-should-test-generation-use">Q6. What
+temperature should test generation use?</h3>
+<p><strong>Answer:</strong> Use a low setting when consistency,
+structured output, or executable steps matter. Use moderate variation to
+brainstorm edge cases. Temperature is model-dependent and does not
+guarantee correctness.</p>
+<h3 id="q7-how-do-you-prevent-ai-hallucinations-in-testing">Q7. How do
+you prevent AI hallucinations in testing?</h3>
+<p><strong>Answer:</strong> Ground outputs with approved sources,
+require citations, constrain responses with schemas, validate facts and
+code, use deterministic assertions, run evaluation sets, and require
+humans to approve high-impact decisions.</p>
+<h3 id="q8-how-would-you-test-an-ai-generated-test-case">Q8. How would
+you test an AI-generated test case?</h3>
+<p><strong>Answer:</strong> Check requirement traceability, correctness
+of preconditions and expected results, coverage contribution, duplicate
+rate, executability, security, determinism, and whether the test detects
+a seeded defect. Track human acceptance and edits.</p>
+<h3 id="q9-what-is-self-healing-automation-and-what-is-its-risk">Q9.
+What is self-healing automation, and what is its risk?</h3>
+<p><strong>Answer:</strong> It detects a broken locator or interaction
+and suggests or applies an alternative. The risk is false healing: the
+test continues against the wrong element and produces a false pass. Use
+confidence thresholds, evidence, reruns, and approval rules.</p>
+<h3 id="q10-why-use-redis-in-an-agentic-qa-platform">Q10. Why use Redis
+in an agentic QA platform?</h3>
+<p><strong>Answer:</strong> Redis is useful for job queues, short-lived
+run state, cache, distributed locks, rate limiting, and real-time
+events. Durable business records and final results should remain in a
+persistent database.</p>
+<h3 id="q11-how-do-you-test-an-ai-agent">Q11. How do you test an AI
+agent?</h3>
+<p><strong>Answer:</strong> Evaluate task completion, plan quality, tool
+selection, argument correctness, recovery from failure, stopping
+behavior, evidence quality, cost, latency, and safety. Include
+adversarial prompts, unavailable tools, ambiguous goals, and prohibited
+actions.</p>
+<h3 id="q12-when-should-a-human-approval-be-mandatory">Q12. When should
+a human approval be mandatory?</h3>
+<p><strong>Answer:</strong> Before production access, destructive data
+changes, external publication, code merge, security-impacting changes,
+expensive actions, handling sensitive data, or any action with low
+confidence and high impact.</p>
+<h3 id="q13-should-passfail-be-decided-by-an-llm">Q13. Should pass/fail
+be decided by an LLM?</h3>
+<p><strong>Answer:</strong> Prefer deterministic assertions for status
+codes, database state, calculations, and UI properties. An LLM may
+assist with subjective evidence such as message clarity or visual
+meaning, but its judgment should be bounded, scored, and reviewed when
+risk is significant.</p>
+<h3 id="q14-how-would-you-reduce-the-cost-of-ai-testing">Q14. How would
+you reduce the cost of AI testing?</h3>
+<p><strong>Answer:</strong> Use smaller models for simple tasks, filter
+and summarize context, cache safe results, retrieve only relevant
+chunks, batch operations, limit agent steps, use deterministic code
+where possible, and route expensive models only to complex cases.</p>
+<h3 id="q15-what-is-the-best-first-ai-project-for-a-qa-team">Q15. What
+is the best first AI project for a QA team?</h3>
+<p><strong>Answer:</strong> Start with a low-risk assistant such as
+requirement analysis, test drafting, or failure summarization. Measure
+accuracy and human time saved. Then add supervised execution after the
+team has evaluation data and safety controls.</p>
+<h3 id="q16-how-do-generative-ai-and-agentic-ai-differ">Q16. How do
+generative AI and agentic AI differ?</h3>
+<p><strong>Answer:</strong> Generative AI creates content from an input.
+Agentic AI uses generated reasoning within a loop of planning, tool use,
+observation, and adaptation to achieve a goal.</p>
+<h3
+id="q17-what-happens-if-retrieved-documents-contain-malicious-instructions">Q17.
+What happens if retrieved documents contain malicious instructions?</h3>
+<p><strong>Answer:</strong> Treat retrieved text as untrusted data. Keep
+system policies separate, restrict tools independently of the prompt,
+sanitize content, detect injection attempts, and require approval for
+sensitive actions.</p>
+<h3 id="q18-why-not-create-multiple-agents-immediately">Q18. Why not
+create multiple agents immediately?</h3>
+<p><strong>Answer:</strong> Multiple agents increase coordination
+failure, latency, cost, and debugging complexity. Begin with one
+controlled workflow. Add specialized roles only when evaluation proves
+that separation improves quality or scalability.</p>
+<hr />
+<h2 id="9-final-strategy">9. Final strategy</h2>
+<p>The most effective progression is:</p>
+<ol type="1">
+<li>Preserve manual testing where judgment and discovery matter.</li>
+<li>Automate stable, repetitive checks with conventional
+frameworks.</li>
+<li>Add AI to requirement analysis, test design, data generation, and
+failure triage.</li>
+<li>Ground AI with RAG and company knowledge.</li>
+<li>Expose narrowly scoped tools through a secure tool layer such as
+MCP.</li>
+<li>Build a supervised agent around an explicit workflow and isolated
+test workers.</li>
+<li>Evaluate quality and safety continuously before increasing
+autonomy.</li>
+</ol>
+<p>The future-ready QA engineer is not only a test executor. They are a
+quality strategist who understands product risk, automation, data, AI
+behavior, system architecture, evaluation, and governance.</p>
+      </article>
+      <nav class="topic-navigation" aria-label="Topic navigation">
+        <button class="btn previous" id="previousTopic" type="button">← <strong>Previous</strong></button>
+        <span class="topic-position" id="topicPosition" aria-live="polite"></span>
+        <button class="btn next" id="nextTopic" type="button"><strong>Next</strong> →</button>
+      </nav>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      'use strict';
+      var storageKey = 'ai-qa-guide-edits-v1';
+      var themeKey = 'ai-qa-guide-theme';
+      var guide = document.getElementById('guide');
+      var originalContent = guide.innerHTML;
+      var editButton = document.getElementById('editButton');
+      var saveState = document.getElementById('saveState');
+      var searchInput = document.getElementById('searchInput');
+      var searchStatus = document.getElementById('searchStatus');
+      var toast = document.getElementById('toast');
+      var saveTimer;
+      var sections = [];
+      var currentTopic = 0;
+
+      function slugify(text, index) {
+        var slug = text.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-/, '');
+        while (slug.slice(-1) === '-') slug = slug.slice(0, -1);
+        return slug || 'section-' + index;
+      }
+
+      function wrapTables() {
+        guide.querySelectorAll('table').forEach(function (table) {
+          if (table.parentElement.classList.contains('table-wrap')) return;
+          var wrap = document.createElement('div');
+          wrap.className = 'table-wrap';
+          table.parentNode.insertBefore(wrap, table);
+          wrap.appendChild(table);
+        });
+      }
+
+      function buildSections() {
+        var existing = Array.from(guide.querySelectorAll(':scope > .topic-section'));
+        if (existing.length) {
+          sections = existing;
+          return;
+        }
+        var headings = Array.from(guide.querySelectorAll(':scope > h2'));
+        headings.forEach(function (heading, index) {
+          var section = document.createElement('section');
+          section.className = 'topic-section';
+          section.dataset.topic = String(index);
+          guide.insertBefore(section, heading);
+          var node = heading;
+          while (node && (node === heading || node.tagName !== 'H2')) {
+            var next = node.nextSibling;
+            section.appendChild(node);
+            node = next;
+          }
+        });
+        sections = Array.from(guide.querySelectorAll(':scope > .topic-section'));
+      }
+
+      function buildAccordions() {
+        var qaSection = sections.find(function (section) {
+          var title = section.querySelector('h2');
+          return title && (title.id === '8-interview-and-training-questions-with-answers' || /^8\./.test(title.textContent.trim()));
+        });
+
+        sections.forEach(function (section) {
+          if (section === qaSection) return;
+          Array.from(section.querySelectorAll(':scope > details.subtopic')).forEach(function (details) {
+            var heading = details.querySelector('summary h3');
+            var content = details.querySelector('.subtopic-content');
+            if (heading) section.insertBefore(heading, details);
+            if (content) {
+              while (content.firstChild) section.insertBefore(content.firstChild, details);
+            }
+            details.remove();
+          });
+        });
+
+        if (!qaSection || qaSection.querySelector(':scope > .subtopic')) return;
+        var headings = Array.from(qaSection.querySelectorAll(':scope > h3'));
+        headings.forEach(function (heading) {
+          var details = document.createElement('details');
+          details.className = 'subtopic';
+          var summary = document.createElement('summary');
+          var content = document.createElement('div');
+          content.className = 'subtopic-content';
+          qaSection.insertBefore(details, heading);
+          details.appendChild(summary);
+          summary.appendChild(heading);
+          details.appendChild(content);
+          var node = details.nextSibling;
+          while (node && node.tagName !== 'H3' && !(node.classList && node.classList.contains('subtopic'))) {
+            var next = node.nextSibling;
+            content.appendChild(node);
+            node = next;
+          }
+        });
+      }
+
+      function topicTitle(index) {
+        var heading = sections[index] && sections[index].querySelector('h2');
+        return heading ? heading.textContent.trim() : 'Topic ' + (index + 1);
+      }
+
+      function showTopic(index, updateHash) {
+        if (!sections.length) return;
+        currentTopic = Math.max(0, Math.min(index, sections.length - 1));
+        sections.forEach(function (section, sectionIndex) {
+          section.classList.toggle('active', sectionIndex === currentTopic);
+          section.setAttribute('aria-hidden', String(sectionIndex !== currentTopic));
+        });
+        var previous = document.getElementById('previousTopic');
+        var next = document.getElementById('nextTopic');
+        previous.disabled = currentTopic === 0;
+        next.disabled = currentTopic === sections.length - 1;
+        previous.querySelector('strong').textContent = currentTopic > 0 ? topicTitle(currentTopic - 1) : 'Previous';
+        next.querySelector('strong').textContent = currentTopic < sections.length - 1 ? topicTitle(currentTopic + 1) : 'Next';
+        document.getElementById('topicPosition').textContent = 'Topic ' + (currentTopic + 1) + ' of ' + sections.length;
+        var activeHeading = sections[currentTopic].querySelector('h2');
+        document.querySelectorAll('.toc a').forEach(function (link) {
+          var target = document.getElementById(link.getAttribute('href').slice(1));
+          link.classList.toggle('active', Boolean(target && target.closest('.topic-section') === sections[currentTopic]));
+        });
+        if (updateHash && activeHeading) history.replaceState(null, '', '#' + activeHeading.id);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function buildToc() {
+        var toc = document.getElementById('toc');
+        toc.innerHTML = '';
+        guide.querySelectorAll('h2, h3').forEach(function (heading, index) {
+          if (!heading.id) heading.id = slugify(heading.textContent, index);
+          var link = document.createElement('a');
+          link.href = '#' + heading.id;
+          link.textContent = heading.textContent;
+          link.dataset.level = heading.tagName.substring(1);
+          link.addEventListener('click', function (event) {
+            event.preventDefault();
+            var section = heading.closest('.topic-section');
+            var topicIndex = sections.indexOf(section);
+            showTopic(topicIndex, false);
+            var dropdown = heading.closest('details.subtopic');
+            if (dropdown) dropdown.open = true;
+            history.replaceState(null, '', '#' + heading.id);
+            window.setTimeout(function () { heading.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 30);
+            document.body.classList.remove('nav-open');
+            document.getElementById('menuButton').setAttribute('aria-expanded', 'false');
+          });
+          toc.appendChild(link);
+        });
+      }
+
+      function restoreSaved() {
+        var saved = localStorage.getItem(storageKey);
+        if (saved) guide.innerHTML = saved;
+        wrapTables();
+        buildSections();
+        buildAccordions();
+        buildToc();
+        var hashTarget = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+        var hashSection = hashTarget && hashTarget.closest('.topic-section');
+        var initial = hashSection ? sections.indexOf(hashSection) : 0;
+        var hashDropdown = hashTarget && hashTarget.closest('details.subtopic');
+        if (hashDropdown) hashDropdown.open = true;
+        showTopic(initial, false);
+      }
+
+      function setEdit(active) {
+        clearHighlights();
+        searchInput.value = '';
+        searchStatus.textContent = '⌘ / Ctrl + K';
+        document.body.classList.toggle('editing', active);
+        guide.contentEditable = active ? 'true' : 'false';
+        editButton.setAttribute('aria-pressed', String(active));
+        editButton.querySelector('.label').textContent = active ? 'Done editing' : 'Edit content';
+        document.getElementById('editorHelp').textContent = active
+          ? 'Editing is active. Select text to format it; changes autosave in this browser.'
+          : 'Select Edit content, then click any text in the current topic.';
+        if (!active) {
+          localStorage.setItem(storageKey, guide.innerHTML);
+          saveState.textContent = 'Saved locally';
+          buildToc();
+        } else {
+          guide.focus();
+        }
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.setTimeout(function () { toast.classList.remove('show'); }, 2200);
+      }
+
+      function clearHighlights() {
+        guide.querySelectorAll('mark.search-hit').forEach(function (mark) {
+          mark.replaceWith(document.createTextNode(mark.textContent));
+        });
+        guide.normalize();
+      }
+
+      function searchGuide(term) {
+        clearHighlights();
+        var query = term.trim();
+        if (!query) {
+          searchStatus.textContent = '⌘ / Ctrl + K';
+          return;
+        }
+        var count = 0;
+        var first = null;
+        var walker = document.createTreeWalker(guide, NodeFilter.SHOW_TEXT);
+        var nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+        nodes.forEach(function (node) {
+          if (!node.parentElement || ['SCRIPT', 'STYLE', 'CODE'].includes(node.parentElement.tagName)) return;
+          var text = node.nodeValue;
+          var lower = text.toLowerCase();
+          var q = query.toLowerCase();
+          if (lower.indexOf(q) === -1) return;
+          var fragment = document.createDocumentFragment();
+          var start = 0;
+          var index;
+          while ((index = lower.indexOf(q, start)) !== -1) {
+            fragment.appendChild(document.createTextNode(text.slice(start, index)));
+            var mark = document.createElement('mark');
+            mark.className = 'search-hit';
+            mark.textContent = text.slice(index, index + query.length);
+            fragment.appendChild(mark);
+            if (!first) first = mark;
+            count += 1;
+            start = index + query.length;
+          }
+          fragment.appendChild(document.createTextNode(text.slice(start)));
+          node.parentNode.replaceChild(fragment, node);
+        });
+        searchStatus.textContent = count + (count === 1 ? ' match' : ' matches');
+        if (first) {
+          var resultSection = first.closest('.topic-section');
+          if (resultSection) showTopic(sections.indexOf(resultSection), false);
+          var resultDropdown = first.closest('details.subtopic');
+          if (resultDropdown) resultDropdown.open = true;
+          window.setTimeout(function () { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 30);
+        }
+      }
+
+      function downloadHtml() {
+        var wasEditing = document.body.classList.contains('editing');
+        if (wasEditing) setEdit(false);
+        clearHighlights();
+        var clone = document.documentElement.cloneNode(true);
+        clone.querySelector('body').classList.remove('editing', 'nav-open');
+        clone.querySelector('#guide').setAttribute('contenteditable', 'false');
+        var html = '<!doctype html>\n' + clone.outerHTML;
+        var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'AI_QA_Engineer_Editable_Guide.html';
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Editable HTML downloaded');
+      }
+
+      editButton.addEventListener('click', function () {
+        setEdit(!document.body.classList.contains('editing'));
+      });
+
+      document.getElementById('editorEditButton').addEventListener('click', function () {
+        setEdit(true);
+        var activeSection = sections[currentTopic];
+        if (activeSection) activeSection.focus();
+      });
+
+      document.getElementById('editorSaveButton').addEventListener('click', function () {
+        localStorage.setItem(storageKey, guide.innerHTML);
+        saveState.textContent = 'Saved locally';
+        setEdit(false);
+        showToast('Changes saved in this browser');
+      });
+
+      document.getElementById('editorDownloadButton').addEventListener('click', downloadHtml);
+
+      document.querySelectorAll('[data-command]').forEach(function (button) {
+        button.addEventListener('mousedown', function (event) { event.preventDefault(); });
+        button.addEventListener('click', function () {
+          guide.focus();
+          document.execCommand(button.dataset.command, false, null);
+        });
+      });
+
+      guide.addEventListener('dblclick', function () {
+        if (!document.body.classList.contains('editing')) setEdit(true);
+      });
+
+      guide.addEventListener('input', function () {
+        if (!document.body.classList.contains('editing')) return;
+        saveState.textContent = 'Saving…';
+        window.clearTimeout(saveTimer);
+        saveTimer = window.setTimeout(function () {
+          localStorage.setItem(storageKey, guide.innerHTML);
+          saveState.textContent = 'Saved locally';
+        }, 500);
+      });
+
+      document.getElementById('resetButton').addEventListener('click', function () {
+        if (!window.confirm('Reset all local edits and restore the original guide?')) return;
+        localStorage.removeItem(storageKey);
+        guide.innerHTML = originalContent;
+        wrapTables();
+        buildSections();
+        buildAccordions();
+        buildToc();
+        showTopic(0, true);
+        showToast('Original content restored');
+      });
+
+      document.getElementById('downloadButton').addEventListener('click', downloadHtml);
+      document.getElementById('printButton').addEventListener('click', function () { window.print(); });
+      document.getElementById('themeButton').addEventListener('click', function () {
+        var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem(themeKey, next);
+      });
+
+      searchInput.addEventListener('input', function () { searchGuide(searchInput.value); });
+      document.addEventListener('keydown', function (event) {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+          event.preventDefault(); searchInput.focus();
+        }
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+          event.preventDefault();
+          localStorage.setItem(storageKey, guide.innerHTML);
+          showToast('Changes saved locally');
+        }
+        if (event.key === 'Escape') {
+          document.body.classList.remove('nav-open');
+          document.getElementById('menuButton').setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      document.getElementById('menuButton').addEventListener('click', function () {
+        if (window.matchMedia('(max-width: 980px)').matches) {
+          var open = document.body.classList.toggle('nav-open');
+          this.setAttribute('aria-expanded', String(open));
+        } else {
+          var collapsed = document.body.classList.toggle('sidebar-collapsed');
+          this.setAttribute('aria-expanded', String(!collapsed));
+          this.querySelector('.label').textContent = collapsed ? 'Show contents' : 'Hide contents';
+        }
+      });
+      document.getElementById('scrim').addEventListener('click', function () {
+        document.body.classList.remove('nav-open');
+        document.getElementById('menuButton').setAttribute('aria-expanded', 'false');
+      });
+
+      window.addEventListener('scroll', function () {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        document.getElementById('progress').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+      }, { passive: true });
+
+      document.getElementById('previousTopic').addEventListener('click', function () { showTopic(currentTopic - 1, true); });
+      document.getElementById('nextTopic').addEventListener('click', function () { showTopic(currentTopic + 1, true); });
+
+      document.documentElement.dataset.theme = localStorage.getItem(themeKey) || 'light';
+      restoreSaved();
+    }());
+  </script>
+</body>
+</html>
